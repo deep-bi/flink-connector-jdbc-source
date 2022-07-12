@@ -1,15 +1,23 @@
 package bi.deep.jdbc.visitors;
 
+import bi.deep.jdbc.parsers.SerializableFunction;
+
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JsonStringVisitor extends ColumnVisitor<String> {
     private Map<String, String> object;
+    private final SerializableFunction<String, String> columnDisplayName;
+
+    public JsonStringVisitor(SerializableFunction<String, String> columnDisplayName) {
+        this.columnDisplayName = columnDisplayName;
+    }
 
     @Override
     public void open() {
@@ -89,7 +97,7 @@ public class JsonStringVisitor extends ColumnVisitor<String> {
     @Override
     public String collect() {
         String json = object.entrySet().stream()
-                .map(kv -> String.format("\"%s\":%s", kv.getKey(), kv.getValue()))
+                .map(kv -> String.format("\"%s\":%s", columnDisplayName.apply(kv.getKey()), kv.getValue()))
                 .collect(Collectors.joining(","));
         return String.format("{%s}", json);
     }

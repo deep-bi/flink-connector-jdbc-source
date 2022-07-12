@@ -13,6 +13,8 @@ public class JdbcSplitEnumerator implements SplitEnumerator<JdbcSplit, JdbcCheck
     private final long intervalMs;
     private final long offsetMs;
 
+    private int readerIndex = -1;
+
     public JdbcSplitEnumerator(SplitEnumeratorContext<JdbcSplit> context, long offsetMs, long intervalMs) {
         if (context.currentParallelism() > 1) throw new ParallelismExceededException(context.currentParallelism());
         this.context = context;
@@ -22,7 +24,9 @@ public class JdbcSplitEnumerator implements SplitEnumerator<JdbcSplit, JdbcCheck
 
     @Override
     public void start() {
-        context.callAsync(this::fetchSplit, (split, error) -> context.assignSplit(split, 0), offsetMs, intervalMs);
+        context.callAsync(this::fetchSplit, (split, error) -> {
+            if (readerIndex >= 0) context.assignSplit(split, readerIndex);
+        }, offsetMs, intervalMs);
     }
 
     @Override
@@ -38,6 +42,7 @@ public class JdbcSplitEnumerator implements SplitEnumerator<JdbcSplit, JdbcCheck
     @Override
     public void addReader(int i) {
         // Do nothing, there should be exactly one reader
+        readerIndex = i;
     }
 
     @Override

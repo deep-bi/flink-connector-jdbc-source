@@ -3,11 +3,12 @@ package bi.deep.jdbc.visitors;
 import bi.deep.jdbc.RowSchema;
 import org.apache.commons.lang3.NotImplementedException;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.*;
 
-public abstract class ColumnVisitor<T> {
+public abstract class ColumnVisitor<T> implements Serializable {
 
     /**
      * Open visitor to have clean visitor state

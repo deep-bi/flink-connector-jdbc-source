@@ -1,10 +1,11 @@
 package bi.deep.jdbc.parsers;
 
+import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.function.Function;
 
-public abstract class Parser<T> implements Function<ResultSet, Result<T>>, ThrowableFunction<ResultSet, T> {
+public abstract class Parser<T> implements Function<ResultSet, Result<T>>, ThrowableFunction<ResultSet, T>, Serializable {
 
     @Override
     public final Result<T> apply(ResultSet resultSet) {

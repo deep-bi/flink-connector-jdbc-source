@@ -3,13 +3,16 @@ package bi.deep.flink.source;
 import bi.deep.jdbc.parsers.Parser;
 import com.esotericsoftware.kryo.NotNull;
 
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Properties;
+import java.util.function.Function;
 
-public class JdbcSourceConfig<T> {
+public class JdbcSourceConfig<T> implements Serializable {
 
     private String query;
     private String connectionUrl;
@@ -17,12 +20,14 @@ public class JdbcSourceConfig<T> {
     private String password;
     private Properties connectionProperties;
     private Parser<T> parser;
-
     private Duration initialDiscoveryOffset;
 
     private Duration discoveryInterval;
 
+    private Duration pollInterval;
+
     private boolean ignoreParseExceptions;
+
 
     /**
      * Get JDBC connection. Parameter resolution:
@@ -60,8 +65,13 @@ public class JdbcSourceConfig<T> {
         return initialDiscoveryOffset;
     }
 
+    public Duration getPollInterval() {
+        return pollInterval;
+    }
+
     private JdbcSourceConfig() {
     }
+
 
     public static <U> Builder<U> builder() {
         return new Builder<>();
@@ -80,6 +90,8 @@ public class JdbcSourceConfig<T> {
         private Duration initialDiscoveryOffset = Duration.ZERO;
 
         private Duration discoveryInterval;
+
+        private Duration pollInterval = Duration.of(50, ChronoUnit.MILLIS);
 
         private Builder() {
         }
@@ -129,6 +141,11 @@ public class JdbcSourceConfig<T> {
             return this;
         }
 
+        public Builder<T> withPollInterval(Duration interval) {
+            this.pollInterval = interval;
+            return this;
+        }
+
         public JdbcSourceConfig<T> build() {
             String exceptionFormat = "Field `%s` must be set in builder";
             if (this.query == null) {
@@ -154,6 +171,7 @@ public class JdbcSourceConfig<T> {
             config.ignoreParseExceptions = ignoreParseExceptions;
             config.initialDiscoveryOffset = initialDiscoveryOffset;
             config.discoveryInterval = discoveryInterval;
+            config.pollInterval = pollInterval;
 
             return config;
         }

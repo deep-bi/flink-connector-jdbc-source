@@ -52,7 +52,7 @@ public class JdbcReader<T> implements SourceReader<T, JdbcSplit> {
     public InputStatus pollNext(ReaderOutput<T> output) throws Exception {
         validateTask();
 
-        T result = this.results.poll(5, TimeUnit.SECONDS);
+        T result = this.results.poll(config.getPollInterval().toMillis(), TimeUnit.MILLISECONDS);
         if (result == null) {
             validateTask(); // If there were no output, then maybe task failed?
             setAvailability(false);
