@@ -3,15 +3,15 @@
 # Learn more about .gitignore:
 #     https://www.atlassian.com/git/tutorials/saving-changes/gitignore
 
-# Node artifact files
-node_modules/
-dist/
-
-venv
+.pytest_cache
+.mypy_cache
+.tox
+*.egg-info
 .vscode
-__pycache__/
+__pycache__
 sample.db
 test.py
+venv/
 
 # Compiled Java class files
 *.class

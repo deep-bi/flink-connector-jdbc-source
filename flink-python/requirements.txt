@@ -1,0 +1,5 @@
+apache_flink==1.15.1
+typing-extensions<3.8.0,>=3.7.0
+pytest==7.1.2
+tox==3.25.1
+py4j==0.10.9.3
