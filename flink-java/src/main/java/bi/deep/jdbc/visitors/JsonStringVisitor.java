@@ -25,73 +25,85 @@ public class JsonStringVisitor extends ColumnVisitor<String> {
     }
 
     @Override
-    protected void visitBigDecimal(String column, BigDecimal value, int sqlType) {
-        object.put(column, value.toString());
+    protected void visitBigDecimal(String column, BigDecimal value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, value.toString());
     }
 
     @Override
-    protected void visitBoolean(String column, Boolean value, int sqlType) {
-        object.put(column, value.toString());
+    protected void visitBoolean(String column, Boolean value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, value.toString());
     }
 
     @Override
-    protected void visitByte(String column, byte value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitByte(String column, byte value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitByteArray(String column, byte[] value, int sqlType) {
+    protected void visitByteArray(String column, byte[] value, boolean wasNull, int sqlType) {
         throw new RuntimeException("Cannot parse byte array to JSON");
     }
 
     @Override
-    protected void visitDate(String column, Date value, int sqlType) {
-        object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+    protected void visitDate(String column, Date value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
     }
 
     @Override
-    protected void visitDouble(String column, double value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitDouble(String column, double value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitFloat(String column, float value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitFloat(String column, float value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitInteger(String column, int value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitInteger(String column, int value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitLong(String column, long value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitLong(String column, long value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitObject(String column, Object value, int sqlType) {
+    protected void visitObject(String column, Object value, boolean wasNull, int sqlType) {
         throw new RuntimeException("Cannot parse object to JSON");
     }
 
     @Override
-    protected void visitShort(String column, short value, int sqlType) {
-        object.put(column, String.valueOf(value));
+    protected void visitShort(String column, short value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.valueOf(value));
     }
 
     @Override
-    protected void visitString(String column, String value, int sqlType) {
-        object.put(column, String.format("\"%s\"", value));
+    protected void visitString(String column, String value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.format("\"%s\"", value));
     }
 
     @Override
-    protected void visitTime(String column, Time value, int sqlType) {
-        object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+    protected void visitTime(String column, Time value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
     }
 
     @Override
-    protected void visitTimestamp(String column, Timestamp value, int sqlType) {
-        object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+    protected void visitTimestamp(String column, Timestamp value, boolean wasNull, int sqlType) {
+        if (wasNull) object.put(column, "null");
+        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
     }
 
     @Override
