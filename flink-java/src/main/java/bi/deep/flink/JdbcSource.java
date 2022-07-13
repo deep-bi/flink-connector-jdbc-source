@@ -3,8 +3,7 @@ package bi.deep.flink;
 import bi.deep.flink.source.*;
 import org.apache.flink.api.connector.source.*;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
-
-import java.time.Duration;
+import org.apache.flink.types.Row;
 
 public class JdbcSource<T> implements Source<T, JdbcSplit, JdbcCheckpoint> {
 
@@ -39,11 +38,11 @@ public class JdbcSource<T> implements Source<T, JdbcSplit, JdbcCheckpoint> {
 
     @Override
     public SimpleVersionedSerializer<JdbcSplit> getSplitSerializer() {
-        return new SimpleSerializer<>();
+        return new JdbcSplitSerializer();
     }
 
     @Override
     public SimpleVersionedSerializer<JdbcCheckpoint> getEnumeratorCheckpointSerializer() {
-        return new SimpleSerializer<>();
+        return new JdbcCheckpointSerializer();
     }
 }

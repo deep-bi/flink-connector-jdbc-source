@@ -8,6 +8,7 @@ import java.time.Instant;
 
 public class JdbcSplit implements SourceSplit, Serializable {
     private static final long serialVersionUID = 1L;
+
     private final Instant timestamp = Instant.now();
 
     @Override

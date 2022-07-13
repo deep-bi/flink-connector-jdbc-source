@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration;
@@ -32,10 +31,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-class JdbcSourceTest {
-
+class JdbcSourceFunctionTest {
     @BeforeAll
     static void initAll() throws SQLException {
         try (Connection connection = DriverManager.getConnection(H2_URL)) {
@@ -74,16 +72,15 @@ class JdbcSourceTest {
                     .build());
 
     @Test
-    public void testSelectWithSource() throws Exception {
-        CollectSink.values.clear();
+    public void testSelectWithSourceFunction() throws Exception {
+        JdbcSourceFunctionTest.CollectSink.values.clear();
 
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
 
-        env.fromSource(new JdbcSource<>(queryJsonConfig("SELECT * FROM employees;")),
-                WatermarkStrategy.forMonotonousTimestamps(),
+        env.addSource(new JdbcSourceFunction<>(queryJsonConfig("SELECT * FROM employees;")),
                 "jdbc-source", TypeInformation.of(String.class)
-        ).addSink(new CollectSink());
+        ).addSink(new JdbcSourceFunctionTest.CollectSink());
 
         JobClient client = env.executeAsync();
         Thread.sleep(500);
@@ -128,7 +125,7 @@ class JdbcSourceTest {
     }
 
     private static Object[] sinkToArray() {
-        return CollectSink.values.stream().map(raw -> Result.of(raw).map(om::readTree).get()).toArray();
+        return JdbcSourceFunctionTest.CollectSink.values.stream().map(raw -> Result.of(raw).map(om::readTree).get()).toArray();
     }
 
     private static Object[] dataToArray(List<String> columns) {
