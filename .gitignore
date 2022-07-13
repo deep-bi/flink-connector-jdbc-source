@@ -7,6 +7,12 @@
 node_modules/
 dist/
 
+venv
+.vscode
+__pycache__/
+sample.db
+test.py
+
 # Compiled Java class files
 *.class
 
