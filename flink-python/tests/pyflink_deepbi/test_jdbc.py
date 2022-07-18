@@ -1,27 +1,36 @@
-from typing import Callable, Sequence
+from pathlib import Path
+from typing import Callable, List, Sequence
 from itertools import combinations
 import pytest
 
 from pyflink.common import Duration
 from pyflink.datastream import StreamExecutionEnvironment, SourceFunction
 from pyflink.datastream.connectors import Source
+from requests import request
 from pyflink_deepbi.jdbc import JDBCSourceBuilder, Parsers
 from py4j.protocol import Py4JJavaError
 
 BuilderStep = Callable[[JDBCSourceBuilder], JDBCSourceBuilder]
 BuilderSteps = Sequence[BuilderStep]
 
-# TODO: Replace it with downloading from repository!
-JARS = [
-    "file:///home/bmikulski/Deep/Repos/deep-flink-source-jdbc/flink-java/target/flink-source-jdbc-1.0-SNAPSHOT.jar",
-    "file:///home/bmikulski/Deep/Repos/deep-flink-source-jdbc/flink-python/sqlite-jdbc-3.36.0.3.jar",
-]
+@pytest.fixture()
+def jars() -> List[str]:
+    # TODO: Replace it with downloading from repository!
+    names =  [
+        "flink-source-jdbc-1.0-SNAPSHOT.jar",
+        "sqlite-jdbc-3.36.0.3.jar"
+    ]
+
+    paths = ["file://" + str((Path("tests/pyflink_deepbi/jars") / name).absolute()) for name in names]
+    print(paths)
+    return paths
+
 
 @pytest.fixture()
-def env() -> StreamExecutionEnvironment:
+def env(jars) -> StreamExecutionEnvironment:
     env = StreamExecutionEnvironment.get_execution_environment()
     env.set_parallelism(1)
-    env.add_jars(*JARS)
+    env.add_jars(*jars)
     return env
 
 

@@ -24,6 +24,7 @@ venv/
 
 # Package files
 *.jar
+!flink-python/tests/pyflink_deepbi/jars/*.jar
 
 # Maven
 target/
