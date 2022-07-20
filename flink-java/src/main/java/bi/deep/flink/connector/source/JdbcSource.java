@@ -1,9 +1,13 @@
-package bi.deep.flink;
+package bi.deep.flink.connector.source;
 
-import bi.deep.flink.source.*;
+import bi.deep.flink.connector.source.checkpoint.JdbcCheckpoint;
+import bi.deep.flink.connector.source.checkpoint.JdbcCheckpointSerializer;
+import bi.deep.flink.connector.source.reader.JdbcReader;
+import bi.deep.flink.connector.source.split.JdbcSplit;
+import bi.deep.flink.connector.source.split.JdbcSplitEnumerator;
+import bi.deep.flink.connector.source.split.JdbcSplitSerializer;
 import org.apache.flink.api.connector.source.*;
 import org.apache.flink.core.io.SimpleVersionedSerializer;
-import org.apache.flink.types.Row;
 
 public class JdbcSource<T> implements Source<T, JdbcSplit, JdbcCheckpoint> {
 

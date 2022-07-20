@@ -1,7 +1,7 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
-import bi.deep.jdbc.RowSchema;
-import bi.deep.jdbc.visitors.ColumnVisitor;
+import bi.deep.flink.connector.source.database.RowSchema;
+import bi.deep.flink.connector.source.database.visitors.ColumnVisitor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

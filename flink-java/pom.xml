@@ -7,9 +7,9 @@
     <!--    Based on this: https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-jdbc/pom.xml-->
 
     <groupId>bi.deep</groupId>
-    <artifactId>flink-source-jdbc</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>Flink : Sources : JDBC</name>
+    <artifactId>flink-connector-jdbc-source</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <name>Flink : Connectors : JDBC Source</name>
 
     <packaging>jar</packaging>
 
@@ -83,7 +83,6 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <version>1.17.3</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
 
@@ -110,8 +109,14 @@
             <scope>test</scope>
         </dependency>
 
-    </dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
 
+    </dependencies>
 
     <build>
         <plugins>
@@ -126,6 +131,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
+                <version>2.22.2</version>
             </plugin>
         </plugins>
     </build>

@@ -1,4 +1,4 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
 
 import java.io.Serializable;

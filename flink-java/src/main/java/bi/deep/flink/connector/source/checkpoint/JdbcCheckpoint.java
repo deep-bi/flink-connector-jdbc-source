@@ -1,4 +1,4 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source.checkpoint;
 
 import java.io.Serializable;
 

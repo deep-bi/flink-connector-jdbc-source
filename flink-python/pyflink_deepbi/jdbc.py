@@ -20,7 +20,7 @@ class Parsers:
 
     @staticmethod
     def json_string() -> Parser:
-        return Parser(get_gateway().jvm.bi.deep.jdbc.parsers.Parsers.JsonString(), Types.STRING())
+        return Parser(get_gateway().jvm.bi.deep.flink.connector.source.database.parsers.Parsers.JsonString(), Types.STRING())
 
 
 class JDBCSource(Source):
@@ -31,7 +31,7 @@ class JDBCSource(Source):
     The source defines property `output_type` - a data type returned by the parser.
     """
     def __init__(self, configuration: JavaObject, output_type: TypeInformation):
-        JSource = get_gateway().jvm.bi.deep.flink.JdbcSource(configuration)
+        JSource = get_gateway().jvm.bi.deep.flink.connector.source.JdbcSource(configuration)
         self.output_type = output_type
         super().__init__(JSource)
 
@@ -44,7 +44,7 @@ class JDBCSourceFunction(SourceFunction):
     The source defines property `output_type` - a data type returned by the parser.
     """
     def __init__(self, configuration: JavaObject, output_type: TypeInformation):
-        JSource = get_gateway().jvm.bi.deep.flink.JdbcSourceFunction(configuration)
+        JSource = get_gateway().jvm.bi.deep.flink.connector.source.JdbcSourceFunction(configuration)
         self.output_type = output_type
         super().__init__(JSource)
 
@@ -59,7 +59,7 @@ class JDBCSourceBuilder:
 
     def __init__(self):
         self.output_type = Types.PICKLED_BYTE_ARRAY()
-        self._j_builder = get_gateway().jvm.bi.deep.flink.source.JdbcSourceConfig.builder()
+        self._j_builder = get_gateway().jvm.bi.deep.flink.connector.source.JdbcSourceConfig.builder()
 
     def with_query(self, query: str) -> 'JDBCSourceBuilder':
         """

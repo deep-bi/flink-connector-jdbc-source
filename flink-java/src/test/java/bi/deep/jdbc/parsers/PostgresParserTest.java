@@ -1,7 +1,9 @@
 package bi.deep.jdbc.parsers;
 
-import bi.deep.flink.source.JdbcReaderTask;
-import bi.deep.flink.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.reader.JdbcReaderTask;
+import bi.deep.flink.connector.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.database.parsers.Parsers;
+import bi.deep.flink.connector.source.database.parsers.Result;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package bi.deep.jdbc.visitors;
+package bi.deep.flink.connector.source.database.visitors;
 
-import bi.deep.jdbc.parsers.SerializableFunction;
+import bi.deep.flink.connector.source.database.parsers.SerializableFunction;
 
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -8,7 +8,6 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class JsonStringVisitor extends ColumnVisitor<String> {

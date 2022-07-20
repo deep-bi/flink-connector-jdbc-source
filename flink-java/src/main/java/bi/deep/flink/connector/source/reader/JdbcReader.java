@@ -1,5 +1,7 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source.reader;
 
+import bi.deep.flink.connector.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.split.JdbcSplit;
 import org.apache.flink.api.connector.source.ReaderOutput;
 import org.apache.flink.api.connector.source.SourceReader;
 import org.apache.flink.core.io.InputStatus;

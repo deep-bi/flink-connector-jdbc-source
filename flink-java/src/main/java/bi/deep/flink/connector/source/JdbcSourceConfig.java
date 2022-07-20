@@ -1,7 +1,6 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source;
 
-import bi.deep.jdbc.parsers.Parser;
-import com.esotericsoftware.kryo.NotNull;
+import bi.deep.flink.connector.source.database.parsers.Parser;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -10,7 +9,6 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Properties;
-import java.util.function.Function;
 
 public class JdbcSourceConfig<T> implements Serializable {
 

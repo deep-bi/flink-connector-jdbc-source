@@ -1,4 +1,4 @@
-package bi.deep.jdbc;
+package bi.deep.flink.connector.source.database;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;

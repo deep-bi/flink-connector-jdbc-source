@@ -1,8 +1,7 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.function.Function;
 
 public abstract class Parser<T> implements Function<ResultSet, Result<T>>, ThrowableFunction<ResultSet, T>, Serializable {

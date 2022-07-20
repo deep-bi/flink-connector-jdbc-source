@@ -1,8 +1,9 @@
 package bi.deep.flink;
 
-import bi.deep.flink.source.JdbcSourceConfig;
-import bi.deep.jdbc.parsers.Parsers;
-import bi.deep.jdbc.parsers.Result;
+import bi.deep.flink.connector.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.JdbcSourceFunction;
+import bi.deep.flink.connector.source.database.parsers.Parsers;
+import bi.deep.flink.connector.source.database.parsers.Result;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;

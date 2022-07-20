@@ -17,7 +17,7 @@ BuilderSteps = Sequence[BuilderStep]
 def jars() -> List[str]:
     # TODO: Replace it with downloading from repository!
     names =  [
-        "flink-source-jdbc-1.0-SNAPSHOT.jar",
+        "flink-connector-jdbc-source-0.1.jar",
         "sqlite-jdbc-3.36.0.3.jar"
     ]
 

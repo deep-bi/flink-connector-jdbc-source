@@ -1,10 +1,11 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source.split;
 
+import bi.deep.flink.connector.source.checkpoint.JdbcCheckpoint;
+import bi.deep.flink.connector.source.ParallelismExceededException;
 import org.apache.flink.api.connector.source.SplitEnumerator;
 import org.apache.flink.api.connector.source.SplitEnumeratorContext;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.List;
 
 public class JdbcSplitEnumerator implements SplitEnumerator<JdbcSplit, JdbcCheckpoint> {

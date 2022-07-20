@@ -1,7 +1,9 @@
 package bi.deep.jdbc.parsers;
 
-import bi.deep.flink.source.JdbcReaderTask;
-import bi.deep.flink.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.reader.JdbcReaderTask;
+import bi.deep.flink.connector.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.database.parsers.Parsers;
+import bi.deep.flink.connector.source.database.parsers.Result;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;

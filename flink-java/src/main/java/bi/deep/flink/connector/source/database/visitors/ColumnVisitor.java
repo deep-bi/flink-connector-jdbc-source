@@ -1,11 +1,10 @@
-package bi.deep.jdbc.visitors;
+package bi.deep.flink.connector.source.database.visitors;
 
-import bi.deep.jdbc.RowSchema;
+import bi.deep.flink.connector.source.database.RowSchema;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.*;
 
 public abstract class ColumnVisitor<T> implements Serializable {

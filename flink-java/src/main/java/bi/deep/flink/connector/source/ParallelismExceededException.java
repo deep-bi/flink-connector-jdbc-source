@@ -1,4 +1,4 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source;
 
 public class ParallelismExceededException extends RuntimeException {
 

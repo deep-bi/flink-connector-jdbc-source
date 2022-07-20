@@ -1,6 +1,6 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
-import bi.deep.jdbc.visitors.JsonStringVisitor;
+import bi.deep.flink.connector.source.database.visitors.JsonStringVisitor;
 
 public class Parsers {
 

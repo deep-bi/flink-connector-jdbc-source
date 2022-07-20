@@ -1,6 +1,7 @@
-package bi.deep.flink.source;
+package bi.deep.flink.connector.source.reader;
 
-import bi.deep.jdbc.parsers.Result;
+import bi.deep.flink.connector.source.JdbcSourceConfig;
+import bi.deep.flink.connector.source.database.parsers.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
