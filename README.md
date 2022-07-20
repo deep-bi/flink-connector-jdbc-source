@@ -1,9 +1,27 @@
-# JDBC Streaming Source for Flink
+# JDBC streaming source connector for Apache Flink
 
-This is implementation of JDBC streaming source for Flink and PyFlink.
+This connector for Apache Flink provides a streaming JDBC source.
+The connector implements a source function for Flink that queries the database on a regular interval and pushes all the results to the output stream.
+
+Features:
+
+- Accept custom JDBC connection parameters and custom SQL SELECT query to be executed
+
+- Extendable row parsers
+
+- Implemented in Java, but with additional Python binding for the source function
 
 
-## JDBC Streaming Source
+## Compatibility Matrix
+
+The main branch will always have the most recent supported versions of Flink.
+
+| Connector Version | Flink Version | Status            |
+|-------------------|---------------|-------------------|
+| 0.1               | 1.15          | Under Development |
+
+
+## Usage (PyFlink)
 
 A JDBC streaming source reads a JDBC compliant database by using provided query. To create a source you can use following code (in PyFlink):
 
@@ -46,3 +64,4 @@ pip install -e .  # to install module as editable for the unit test
 ```
 
 To test across Python versions run `tox`. For running only unit test on current interpreter run: `pytest tests/`.
+
