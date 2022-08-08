@@ -89,7 +89,7 @@ class H2ParsersTest {
         return JdbcSourceConfig.<String>builder()
                 .withUrl(H2_URL)
                 .withQuery(query)
-                .withParser(Parsers.JsonString())
+                .withParser((Parsers.JsonString(String::toLowerCase)))
                 .withDiscoveryInterval(Duration.ZERO)
                 .build();
     }
