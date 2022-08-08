@@ -68,6 +68,6 @@ def test_can_build_source_fn_with_minimal_parameters(env, steps: BuilderSteps):
 
 
 @pytest.mark.parametrize("steps", builder_steps(4))
-def test_can_build_source_fn_with_minimal_parameters(env, steps: BuilderSteps):
+def test_can_build_source_with_minimal_parameters(env, steps: BuilderSteps):
     source = compose(steps)(JDBCSourceBuilder()).build_source()
     assert isinstance(source, Source)

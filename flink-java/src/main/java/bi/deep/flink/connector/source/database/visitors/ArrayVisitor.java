@@ -1,13 +1,12 @@
 package bi.deep.flink.connector.source.database.visitors;
 
-import bi.deep.flink.connector.source.database.RowSchema;
 import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.*;
 
-public abstract class ColumnVisitor<T> implements Serializable {
+public abstract class ArrayVisitor<T> implements Serializable {
 
     /**
      * Open visitor to have clean visitor state
@@ -26,26 +25,25 @@ public abstract class ColumnVisitor<T> implements Serializable {
      */
     public abstract T collect();
 
-    public final void visit(RowSchema schema, ResultSet row) throws SQLException {
-        for (String column : schema.getColumns()) {
-            int type = schema.getColumnsToTypes().get(column);
+    public final void visit(Array array) throws SQLException {
 
+        int index = 0;
+        for (Object value : (Object[]) array.getArray()) {
             String format = "Types.%s not yet implemented";
-            switch (type) {
+            switch (array.getBaseType()) {
                 case Types.ARRAY:
-                    visitArray(column, row.getArray(column), row.wasNull(), type);
-                    break;
+                    throw new NotImplementedException(String.format(format, "ARRAY"));
                 case Types.BIGINT:
-                    visitLong(column, row.getLong(column), row.wasNull(), type);
+                    visitLong(index, (Long) value);
                     break;
                 case Types.BIT:
                 case Types.BOOLEAN:
-                    visitBoolean(column, row.getBoolean(column), row.wasNull(), type);
+                    visitBoolean(index, (Boolean) value);
                     break;
                 case Types.BINARY:
                 case Types.LONGVARBINARY:
                 case Types.VARBINARY:
-                    visitByteArray(column, row.getBytes(column), row.wasNull(), type);
+                    visitByteArray(index, (byte[]) value);
                     break;
                 case Types.BLOB:
                     throw new NotImplementedException(String.format(format, "BLOB"));
@@ -55,33 +53,33 @@ public abstract class ColumnVisitor<T> implements Serializable {
                 case Types.NCHAR:
                 case Types.NVARCHAR:
                 case Types.VARCHAR:
-                    visitString(column, row.getString(column), row.wasNull(), type);
+                    visitString(index, (String) value);
                     break;
                 case Types.CLOB:
                     throw new NotImplementedException(String.format(format, "CLOB"));
                 case Types.DATALINK:
                     throw new NotImplementedException(String.format(format, "DATALINK"));
                 case Types.DATE:
-                    visitDate(column, row.getDate(column), row.wasNull(), type);
+                    visitDate(index, (Date) value);
                     break;
                 case Types.DECIMAL:
                 case Types.NUMERIC:
                 case Types.REAL:
-                    visitBigDecimal(column, row.getBigDecimal(column), row.wasNull(), type);
+                    visitBigDecimal(index, (BigDecimal) value);
                     break;
                 case Types.DISTINCT:
                     throw new NotImplementedException(String.format(format, "DISTINCT"));
                 case Types.DOUBLE:
-                    visitDouble(column, row.getDouble(column), row.wasNull(), type);
+                    visitDouble(index, (Double) value);
                     break;
                 case Types.FLOAT:
-                    visitFloat(column, row.getFloat(column), row.wasNull(), type);
+                    visitFloat(index, (Float) value);
                     break;
                 case Types.INTEGER:
-                    visitInteger(column, row.getInt(column), row.wasNull(), type);
+                    visitInteger(index, (Integer) value);
                     break;
                 case Types.JAVA_OBJECT:
-                    visitObject(column, row.getObject(column), row.wasNull(), type);
+                    visitObject(index, value);
                     break;
                 case Types.NCLOB:
                     throw new NotImplementedException(String.format(format, "NCLOB"));
@@ -96,7 +94,7 @@ public abstract class ColumnVisitor<T> implements Serializable {
                 case Types.ROWID:
                     throw new NotImplementedException(String.format(format, "ROWID"));
                 case Types.SMALLINT:
-                    visitShort(column, row.getShort(column), row.wasNull(), type);
+                    visitShort(index, (Short) value);
                     break;
                 case Types.SQLXML:
                     throw new NotImplementedException(String.format(format, "SQLXML"));
@@ -104,61 +102,58 @@ public abstract class ColumnVisitor<T> implements Serializable {
                     throw new NotImplementedException(String.format(format, "STRUCT"));
                 case Types.TIME:
                 case Types.TIME_WITH_TIMEZONE:
-                    visitTime(column, row.getTime(column), row.wasNull(), type);
+                    visitTime(index, (Time) value);
                     break;
                 case Types.TIMESTAMP:
                 case Types.TIMESTAMP_WITH_TIMEZONE:
-                    visitTimestamp(column, row.getTimestamp(column), row.wasNull(), type);
+                    visitTimestamp(index, (Timestamp) value);
                     break;
                 case Types.TINYINT:
-                    visitByte(column, row.getByte(column), row.wasNull(), type);
+                    visitByte(index, (Byte) value);
                     break;
             }
         }
     }
 
-    protected void visitArray(String column, Array value, boolean wasNull, int sqlType) throws SQLException {
+    protected void visitByteArray(int index, byte[] value) {
     }
 
-    protected void visitByteArray(String column, byte[] value, boolean wasNull, int sqlType) {
+    protected void visitBoolean(int index, Boolean value) {
     }
 
-    protected void visitBoolean(String column, Boolean value, boolean wasNull, int sqlType) {
+    protected void visitString(int index, String value) {
     }
 
-    protected void visitString(String column, String value, boolean wasNull, int sqlType) {
+    protected void visitDate(int index, Date value) {
     }
 
-    protected void visitDate(String column, Date value, boolean wasNull, int sqlType) {
+    protected void visitTime(int index, Time value) {
     }
 
-    protected void visitTime(String column, Time value, boolean wasNull, int sqlType) {
+    protected void visitTimestamp(int index, Timestamp value) {
     }
 
-    protected void visitTimestamp(String column, Timestamp value, boolean wasNull, int sqlType) {
+    protected void visitBigDecimal(int index, BigDecimal value) {
     }
 
-    protected void visitBigDecimal(String column, BigDecimal value, boolean wasNull, int sqlType) {
+    protected void visitDouble(int index, double value) {
     }
 
-    protected void visitDouble(String column, double value, boolean wasNull, int sqlType) {
+    protected void visitFloat(int index, float value) {
     }
 
-    protected void visitFloat(String column, float value, boolean wasNull, int sqlType) {
+    protected void visitLong(int index, long value) {
     }
 
-    protected void visitLong(String column, long value, boolean wasNull, int sqlType) {
+    protected void visitObject(int index, Object value) {
     }
 
-    protected void visitObject(String column, Object value, boolean wasNull, int sqlType) {
+    protected void visitInteger(int index, int value) {
     }
 
-    protected void visitInteger(String column, int value, boolean wasNull, int sqlType) {
+    protected void visitShort(int index, short value) {
     }
 
-    protected void visitShort(String column, short value, boolean wasNull, int sqlType) {
-    }
-
-    protected void visitByte(String column, byte value, boolean wasNull, int sqlType) {
+    protected void visitByte(int index, byte value) {
     }
 }

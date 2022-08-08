@@ -1,0 +1,3 @@
+CREATE TABLE foo (bar INTEGER ARRAY);
+
+INSERT INTO foo (bar) VALUES ('{1, 2, 3}');
