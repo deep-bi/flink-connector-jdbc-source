@@ -1,16 +1,29 @@
-from typing import Dict, Type, Union
+from typing import Dict, Optional, Callable
 
 from py4j.java_gateway import JavaObject
 from pyflink.common import TypeInformation, Types, Duration
-from pyflink.datastream.connectors import Source
 from pyflink.datastream import SourceFunction
+from pyflink.datastream.connectors import Source
 from pyflink.java_gateway import get_gateway
 
 from pyflink_deepbi.util import dict_to_java_properties
 
 
+class DisplayFunction:
+
+    def __init__(self, display_f: Callable[[str], str]):
+        self.display_f = display_f
+
+    def apply(self, value: str) -> str:
+        return self.display_f(value)
+
+    class Java:
+        implements = ["bi.deep.flink.connector.source.utils.SerializableFunction"]
+
+
 class Parser:
     """ Python wrapper around JDBC Parsers """
+
     def __init__(self, j_parser: JavaObject, output_type: TypeInformation):
         self.j_parser = j_parser
         self.output_type = output_type
@@ -19,8 +32,16 @@ class Parser:
 class Parsers:
 
     @staticmethod
-    def json_string() -> Parser:
-        return Parser(get_gateway().jvm.bi.deep.flink.connector.source.database.parsers.Parsers.JsonString(), Types.STRING())
+    def json_string(display_f: Optional[Callable[[str], str]] = None) -> Parser:
+        """
+        :param display_f: Optional function that transforms JDBC column name to a display column name. If None (default)
+                          returns unchanged JDBC column name.
+        """
+        j_parsers = get_gateway().jvm.bi.deep.flink.connector.source.database.parsers.Parsers
+        if display_f is None:
+            return Parser(j_parsers.JsonString(), Types.STRING())
+        else:
+            return Parser(j_parsers.JsonString(DisplayFunction(display_f)), Types.STRING())
 
 
 class JDBCSource(Source):
@@ -30,6 +51,7 @@ class JDBCSource(Source):
 
     The source defines property `output_type` - a data type returned by the parser.
     """
+
     def __init__(self, configuration: JavaObject, output_type: TypeInformation):
         JSource = get_gateway().jvm.bi.deep.flink.connector.source.JdbcSource(configuration)
         self.output_type = output_type
@@ -43,6 +65,7 @@ class JDBCSourceFunction(SourceFunction):
 
     The source defines property `output_type` - a data type returned by the parser.
     """
+
     def __init__(self, configuration: JavaObject, output_type: TypeInformation):
         JSource = get_gateway().jvm.bi.deep.flink.connector.source.JdbcSourceFunction(configuration)
         self.output_type = output_type
@@ -99,7 +122,7 @@ class JDBCSourceBuilder:
 
     def with_parser(self, parser: Parser) -> 'JDBCSourceBuilder':
         """ Parser that converts the database records into stream events. Required. """
-        self.output_type = parser.output_type 
+        self.output_type = parser.output_type
         self._j_builder = self._j_builder.withParser(parser.j_parser)
         return self
 
@@ -127,10 +150,10 @@ class JDBCSourceBuilder:
 
     def build_source(self) -> JDBCSource:
         """ Builds a `JDBCSource` as a Source to be used with `env.from_source`"""
-        j_config = self._j_builder.build() 
+        j_config = self._j_builder.build()
         return JDBCSource(j_config, self.output_type)
 
     def build_source_function(self) -> JDBCSourceFunction:
         """ Builds a `JDBCSourceFunction` as a Source Function to be used with `env.add_source` """
-        j_config = self._j_builder.build() 
+        j_config = self._j_builder.build()
         return JDBCSourceFunction(j_config, self.output_type)

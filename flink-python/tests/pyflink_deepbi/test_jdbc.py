@@ -1,22 +1,23 @@
+from itertools import combinations
 from pathlib import Path
 from typing import Callable, List, Sequence
-from itertools import combinations
-import pytest
 
+import pytest
+from py4j.protocol import Py4JJavaError
 from pyflink.common import Duration
 from pyflink.datastream import StreamExecutionEnvironment, SourceFunction
 from pyflink.datastream.connectors import Source
-from requests import request
+
 from pyflink_deepbi.jdbc import JDBCSourceBuilder, Parsers
-from py4j.protocol import Py4JJavaError
 
 BuilderStep = Callable[[JDBCSourceBuilder], JDBCSourceBuilder]
 BuilderSteps = Sequence[BuilderStep]
 
+
 @pytest.fixture()
 def jars() -> List[str]:
     # TODO: Replace it with downloading from repository!
-    names =  [
+    names = [
         "flink-connector-jdbc-source-0.1.jar",
         "sqlite-jdbc-3.36.0.3.jar"
     ]
@@ -34,8 +35,8 @@ def env(jars) -> StreamExecutionEnvironment:
     return env
 
 
-def builder_steps(repeat): 
-    with_query = lambda builder: builder.with_query("SELECT * FROM table;") 
+def builder_steps(repeat):
+    with_query = lambda builder: builder.with_query("SELECT * FROM table;")
     with_parser = lambda builder: builder.with_parser(Parsers.json_string())
     with_url = lambda builder: builder.with_url("jdbc:sqlite::mem:")
     with_discovery_interval = lambda builder: builder.with_discovery_interval(Duration.of_minutes(10))
@@ -44,12 +45,11 @@ def builder_steps(repeat):
 
 
 def compose(steps: BuilderSteps) -> BuilderStep:
-
     def composition(builder: JDBCSourceBuilder) -> JDBCSourceBuilder:
         for step in steps:
             builder = step(builder)
         return builder
-    
+
     return composition
 
 
@@ -64,6 +64,14 @@ def test_invalid_build_throws_exception(env, steps: BuilderSteps):
 @pytest.mark.parametrize("steps", builder_steps(4))
 def test_can_build_source_fn_with_minimal_parameters(env, steps: BuilderSteps):
     source = compose(steps)(JDBCSourceBuilder()).build_source_function()
+    assert isinstance(source, SourceFunction)
+
+
+@pytest.mark.parametrize("steps", builder_steps(4))
+def test_can_build_source_fn_with_lower_case_parser(env, steps: BuilderSteps):
+    builder = compose(steps)(JDBCSourceBuilder())
+    source = builder.with_parser(Parsers.json_string(str.lower)).build_source_function()
+
     assert isinstance(source, SourceFunction)
 
 
