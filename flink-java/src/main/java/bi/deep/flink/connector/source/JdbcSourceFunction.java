@@ -1,5 +1,6 @@
 package bi.deep.flink.connector.source;
 
+import bi.deep.flink.connector.source.utils.Result;
 import bi.deep.flink.connector.source.reader.JdbcReaderTask;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.slf4j.Logger;
@@ -19,10 +20,12 @@ public class JdbcSourceFunction<T> implements SourceFunction<T> {
         this.config = config;
     }
 
-    private void pollLoop(BlockingQueue<T> pipe, SourceContext<T> sourceContext) throws InterruptedException {
+    private void pollLoop(BlockingQueue<Result<T>> pipe, SourceContext<T> sourceContext) throws InterruptedException {
         while (running) {
-            T result = pipe.poll(config.getPollInterval().toMillis(), TimeUnit.MILLISECONDS);
-            if (result != null) sourceContext.collect(result);
+            Result<T> result = pipe.poll(config.getPollInterval().toMillis(), TimeUnit.MILLISECONDS);
+            if (result != null) {
+                sourceContext.collect(result.get());
+            }
         }
     }
 
@@ -30,7 +33,7 @@ public class JdbcSourceFunction<T> implements SourceFunction<T> {
     public void run(SourceContext<T> sourceContext) {
         queryService = Executors.newSingleThreadScheduledExecutor();
         logger = LoggerFactory.getLogger(JdbcSourceFunction.class);
-        BlockingQueue<T> pipe = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<T>> pipe = new LinkedBlockingQueue<>();
 
         queryTask = queryService.scheduleAtFixedRate(new JdbcReaderTask<>(pipe, config),
                 config.getInitialDiscoveryOffset().toMillis(),

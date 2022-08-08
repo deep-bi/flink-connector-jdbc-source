@@ -1,4 +1,4 @@
-package bi.deep.flink.connector.source.database.parsers;
+package bi.deep.flink.connector.source.utils;
 
 public interface ThrowableFunction<In, Out> {
 

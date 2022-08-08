@@ -1,12 +1,9 @@
-package bi.deep.flink;
+package bi.deep.flink.connector.source;
 
-import bi.deep.flink.connector.source.JdbcSource;
-import bi.deep.flink.connector.source.JdbcSourceConfig;
 import bi.deep.flink.connector.source.database.parsers.Parsers;
-import bi.deep.flink.connector.source.database.parsers.Result;
+import bi.deep.flink.connector.source.utils.Result;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -14,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.core.execution.JobClient;
+import org.apache.flink.runtime.client.JobExecutionException;
 import org.apache.flink.runtime.testutils.MiniClusterResourceConfiguration;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
@@ -31,9 +29,9 @@ import java.sql.SQLException;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class JdbcSourceTest {
 
@@ -93,6 +91,20 @@ class JdbcSourceTest {
         assertArrayEquals(dataToArray(dataColumns), sinkToArray());
     }
 
+    @Test
+    public void testInvalidDatabaseConfiguration() {
+        CollectSink.values.clear();
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+
+        env.fromSource(new JdbcSource<>(queryJsonConfig("SELUCT * FROAM employees;")),
+                WatermarkStrategy.forMonotonousTimestamps(),
+                "jdbc-source", TypeInformation.of(String.class)
+        ).addSink(new CollectSink());
+
+        assertThrows(JobExecutionException.class, env::execute);
+    }
+
     private static final ObjectMapper om = JsonMapper.builder()
             .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
             .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
@@ -107,7 +119,6 @@ class JdbcSourceTest {
     );
 
     private static ObjectNode dataToJson(Object[] record, List<String> columns) {
-        ObjectNode node = om.createObjectNode();
         Map<String, Object> json = new HashMap<>();
 
         for (String col : columns) {
@@ -134,10 +145,6 @@ class JdbcSourceTest {
 
     private static Object[] dataToArray(List<String> columns) {
         return data.stream().map(record -> dataToJson(record, columns)).toArray();
-    }
-
-    private static Object[] dataToArray(List<String> columns, Predicate<JsonNode> predicate) {
-        return data.stream().map(record -> dataToJson(record, columns)).filter(predicate).toArray();
     }
 
     private static class CollectSink implements SinkFunction<String> {

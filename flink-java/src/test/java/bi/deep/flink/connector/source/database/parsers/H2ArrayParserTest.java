@@ -1,12 +1,11 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
 import bi.deep.flink.connector.source.JdbcSourceConfig;
-import bi.deep.flink.connector.source.database.parsers.Parsers;
 import bi.deep.flink.connector.source.reader.JdbcReaderTask;
+import bi.deep.flink.connector.source.utils.Result;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.*;
 import java.time.Duration;
@@ -15,7 +14,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PostgresArrayParserTest {
+public class H2ArrayParserTest {
     private static final String H2_URL = "jdbc:h2:mem:myDb;DB_CLOSE_DELAY=-1";
 
     @BeforeAll
@@ -38,26 +37,22 @@ public class PostgresArrayParserTest {
         }
     }
 
+    private static JdbcSourceConfig<String> queryJsonConfig(String query) {
+        return JdbcSourceConfig.<String>builder()
+                .withUrl(H2_URL)
+                .withQuery(query)
+                .withParser(Parsers.JsonString())
+                .withDiscoveryInterval(Duration.ZERO)
+                .build();
+    }
+
     @Test
     public void selectArray() throws InterruptedException {
-        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")) {
-            postgres.withInitScript("init_array_postgresql.sql").start();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
+        JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT * FROM foo;"));
+        task.run();
 
-            JdbcSourceConfig<String> config = JdbcSourceConfig.<String>builder()
-                    .withUrl(postgres.getJdbcUrl())
-                    .withQuery("SELECT * FROM foo;")
-                    .withParser(Parsers.JsonString())
-                    .withUser(postgres.getUsername())
-                    .withPassword(postgres.getPassword())
-                    .withDiscoveryInterval(Duration.ZERO)
-                    .build();
-
-            BlockingQueue<String> queue = new LinkedBlockingQueue<>();
-            JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, config);
-            task.run();
-
-            assertEquals("{\"bar\":[1,2,3]}", queue.take());
-        }
+        assertEquals("{\"bar\":[1,2,3]}", queue.take().get());
     }
 }
 

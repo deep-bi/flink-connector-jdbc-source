@@ -2,6 +2,7 @@ package bi.deep.flink.connector.source.reader;
 
 import bi.deep.flink.connector.source.JdbcSourceConfig;
 import bi.deep.flink.connector.source.split.JdbcSplit;
+import bi.deep.flink.connector.source.utils.Result;
 import org.apache.flink.api.connector.source.ReaderOutput;
 import org.apache.flink.api.connector.source.SourceReader;
 import org.apache.flink.core.io.InputStatus;
@@ -17,7 +18,7 @@ public class JdbcReader<T> implements SourceReader<T, JdbcSplit> {
     private ExecutorService service;
     private final JdbcSourceConfig<T> config;
     private final Logger logger = LoggerFactory.getLogger(JdbcReader.class);
-    public final BlockingQueue<T> results = new LinkedBlockingQueue<>();
+    public final BlockingQueue<Result<T>> results = new LinkedBlockingQueue<>();
     private CompletableFuture<Void> availability;
 
     private CompletableFuture<Void> submittedTask;
@@ -54,13 +55,13 @@ public class JdbcReader<T> implements SourceReader<T, JdbcSplit> {
     public InputStatus pollNext(ReaderOutput<T> output) throws Exception {
         validateTask();
 
-        T result = this.results.poll(config.getPollInterval().toMillis(), TimeUnit.MILLISECONDS);
+        Result<T> result = this.results.poll(config.getPollInterval().toMillis(), TimeUnit.MILLISECONDS);
         if (result == null) {
             validateTask(); // If there were no output, then maybe task failed?
             setAvailability(false);
             return InputStatus.NOTHING_AVAILABLE;
         } else {
-            output.collect(result);
+            output.collect(result.get());
             return InputStatus.MORE_AVAILABLE;
         }
     }

@@ -1,11 +1,13 @@
-package bi.deep.jdbc.parsers;
+package bi.deep.flink.connector.source.database.parsers;
 
-import bi.deep.flink.connector.source.reader.JdbcReaderTask;
 import bi.deep.flink.connector.source.JdbcSourceConfig;
-import bi.deep.flink.connector.source.database.parsers.Parsers;
-import bi.deep.flink.connector.source.database.parsers.Result;
+import bi.deep.flink.connector.source.reader.JdbcReaderTask;
+import bi.deep.flink.connector.source.utils.Result;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.AfterAll;
@@ -44,7 +46,6 @@ class H2ParsersTest {
     );
 
     private static ObjectNode dataToJson(Object[] record, List<String> columns) {
-        ObjectNode node = om.createObjectNode();
         Map<String, Object> json = new HashMap<>();
 
         for (String col : columns) {
@@ -93,8 +94,8 @@ class H2ParsersTest {
                 .build();
     }
 
-    private static Object[] queueToArray(BlockingQueue<String> queue) {
-        return queue.stream().map(raw -> Result.of(raw).map(om::readTree).get()).toArray();
+    private static Object[] queueToArray(BlockingQueue<Result<String>> queue) {
+        return queue.stream().map(raw -> raw.map(om::readTree).get()).toArray();
     }
 
     private static Object[] dataToArray(List<String> columns) {
@@ -107,7 +108,7 @@ class H2ParsersTest {
 
     @Test
     public void selectStar() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
         JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT * FROM employees;"));
         task.run();
 
@@ -116,7 +117,7 @@ class H2ParsersTest {
 
     @Test
     public void selectAge() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
         JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT age FROM employees;"));
 
         task.run();
@@ -127,7 +128,7 @@ class H2ParsersTest {
 
     @Test
     public void selectSalary() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
         JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT salary FROM employees;"));
 
         task.run();
@@ -138,7 +139,7 @@ class H2ParsersTest {
 
     @Test
     public void selectName() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
         JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT name FROM employees;"));
 
         task.run();
@@ -148,7 +149,7 @@ class H2ParsersTest {
 
     @Test
     public void selectStarWhereAgeAtLeast30() {
-        BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+        BlockingQueue<Result<String>> queue = new LinkedBlockingQueue<>();
         JdbcReaderTask<String> task = new JdbcReaderTask<>(queue, queryJsonConfig("SELECT * FROM employees WHERE age >= 30;"));
 
         task.run();

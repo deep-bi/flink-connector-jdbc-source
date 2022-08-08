@@ -1,6 +1,6 @@
 package bi.deep.flink.connector.source.database.visitors.json;
 
-import bi.deep.flink.connector.source.database.parsers.SerializableFunction;
+import bi.deep.flink.connector.source.utils.SerializableFunction;
 import bi.deep.flink.connector.source.database.visitors.ArrayVisitor;
 import bi.deep.flink.connector.source.database.visitors.ColumnVisitor;
 

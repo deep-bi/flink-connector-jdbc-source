@@ -1,7 +1,7 @@
 package bi.deep.flink.connector.source.reader;
 
 import bi.deep.flink.connector.source.JdbcSourceConfig;
-import bi.deep.flink.connector.source.database.parsers.Result;
+import bi.deep.flink.connector.source.utils.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,19 +13,17 @@ import java.util.concurrent.BlockingQueue;
 public class JdbcReaderTask<T> implements Runnable {
 
     private final Logger logger = LoggerFactory.getLogger(JdbcReaderTask.class);
-    private final BlockingQueue<T> results;
+    private final BlockingQueue<Result<T>> results;
     private final JdbcSourceConfig<T> config;
 
-    public JdbcReaderTask(BlockingQueue<T> results, JdbcSourceConfig<T> config) {
+    public JdbcReaderTask(BlockingQueue<Result<T>> results, JdbcSourceConfig<T> config) {
         this.results = results;
         this.config = config;
     }
 
     private void processRow(ResultSet row) throws InterruptedException {
         Result<T> maybeRecord = config.getParser().apply(row);
-        if (maybeRecord.hasValue() || !config.ignoreParseExceptions()) {
-            results.put(maybeRecord.get());
-        }
+        results.put(maybeRecord);
     }
 
     private void query() throws SQLException, InterruptedException {
@@ -34,6 +32,9 @@ public class JdbcReaderTask<T> implements Runnable {
             while (set.next()) {
                 processRow(set);
             }
+        } catch (Throwable e) {
+            results.put(Result.exceptional(e));
+            throw e;
         }
     }
 
