@@ -38,6 +38,7 @@ jobs:
           python-version: '3.8'
           cache: pip
       - run: |
+          cd flink-python
           pip install -r requirements.txt
           pip install -e .
           tox
