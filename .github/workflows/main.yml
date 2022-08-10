@@ -13,6 +13,10 @@ jobs:
   build-jar:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: flink-java
+
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
@@ -23,22 +27,30 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: |
-        cd flink-java
         mvn --batch-mode test
         mvn --batch-mode package --file pom.xml
 
   test-python:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8']
+
+    defaults:
+      run:
+        working-directory: flink-python
+
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python 3.8
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
-          cache: pip
-      - run: |
-          cd flink-python
+          python-version: ${{ matrix.python-version }}
+      - name: "Set up package"
+        run: |
           pip install -r requirements.txt
+          pip install tox-gh-actions
           pip install -e .
-          tox
+      - name: "Run tox"
+        run: tox
