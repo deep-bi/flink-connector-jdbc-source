@@ -5,6 +5,7 @@ import bi.deep.flink.connector.source.utils.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,14 +28,23 @@ public class JdbcReaderTask<T> implements Runnable {
     }
 
     private void query() throws SQLException, InterruptedException {
-        try (Statement stmt = config.getConnection().createStatement()) {
-            ResultSet set = stmt.executeQuery(config.getQuery());
-            while (set.next()) {
-                processRow(set);
+        try (Connection connection = config.getConnection()) {
+            // https://stackoverflow.com/a/1331922
+            connection.setAutoCommit(false);
+            try (Statement stmt = connection.createStatement()) {
+                // http://benjchristensen.com/2008/05/27/mysql-jdbc-memory-usage-on-large-resultset/
+                // stmt.setFetchSize(Integer.MIN_VALUE);
+                stmt.setFetchSize(25000);
+                try (ResultSet set = stmt.executeQuery(config.getQuery())) {
+                    while (set.next()) {
+                        processRow(set);
+                    }
+                }
+
+            } catch (Throwable e) {
+                results.put(Result.exceptional(e));
+                throw e;
             }
-        } catch (Throwable e) {
-            results.put(Result.exceptional(e));
-            throw e;
         }
     }
 
