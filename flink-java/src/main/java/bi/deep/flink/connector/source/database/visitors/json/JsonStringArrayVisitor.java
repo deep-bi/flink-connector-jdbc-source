@@ -24,17 +24,20 @@ public class JsonStringArrayVisitor extends ArrayVisitor<String> {
 
     @Override
     protected void visitBigDecimal(int column, BigDecimal value) {
-        array.add(value.toString());
+        if (value == null) array.add("null");
+        else array.add(value.toString());
     }
 
     @Override
     protected void visitBoolean(int index, Boolean value) {
-        array.add(value.toString());
+        if (value == null) array.add("null");
+        else array.add(value.toString());
     }
 
     @Override
-    protected void visitByte(int index, byte value) {
-        array.add(String.valueOf(value));
+    protected void visitByte(int index, Byte value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
@@ -44,27 +47,32 @@ public class JsonStringArrayVisitor extends ArrayVisitor<String> {
 
     @Override
     protected void visitDate(int index, Date value) {
-        array.add(String.format("\"%s\"", value.toInstant().toString()));
+        if (value == null) array.add("null");
+        else array.add(String.format("\"%s\"", value.toInstant().toString()));
     }
 
     @Override
-    protected void visitDouble(int index, double value) {
-        array.add(String.valueOf(value));
+    protected void visitDouble(int index, Double value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
-    protected void visitFloat(int index, float value) {
-        array.add(String.valueOf(value));
+    protected void visitFloat(int index, Float value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
-    protected void visitInteger(int index, int value) {
-        array.add(String.valueOf(value));
+    protected void visitInteger(int index, Integer value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
-    protected void visitLong(int index, long value) {
-        array.add(String.valueOf(value));
+    protected void visitLong(int index, Long value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
@@ -73,22 +81,26 @@ public class JsonStringArrayVisitor extends ArrayVisitor<String> {
     }
 
     @Override
-    protected void visitShort(int index, short value) {
-        array.add(String.valueOf(value));
+    protected void visitShort(int index, Short value) {
+        if (value == null) array.add("null");
+        else array.add(String.valueOf(value));
     }
 
     @Override
     protected void visitString(int index, String value) {
-        array.add(String.format("\"%s\"", value));
+        if (value == null) array.add("null");
+        else array.add(String.format("\"%s\"", value));
     }
 
     @Override
     protected void visitTime(int index, Time value) {
-        array.add(String.format("\"%s\"", value.toInstant().toString()));
+        if (value == null) array.add("null");
+        else array.add(String.format("\"%s\"", value.toInstant().toString()));
     }
 
     @Override
     protected void visitTimestamp(int index, Timestamp value) {
-        array.add(String.format("\"%s\"", value.toInstant().toString()));
+        if (value == null) array.add("null");
+        else array.add(String.format("\"%s\"", value.toInstant().toString()));
     }
 }

@@ -19,7 +19,7 @@ public class RowSchema {
         columnsToTypes = new HashMap<>();
 
         for (int i = 0; i < metadata.getColumnCount(); i++) {
-            columns[i] = metadata.getColumnName(i+1);
+            columns[i] = metadata.getColumnLabel(i+1);
             columnsToTypes.put(columns[i], metadata.getColumnType(i+1));
         }
     }

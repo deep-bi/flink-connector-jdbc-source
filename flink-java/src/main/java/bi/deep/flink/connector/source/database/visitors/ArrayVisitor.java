@@ -136,24 +136,24 @@ public abstract class ArrayVisitor<T> implements Serializable {
     protected void visitBigDecimal(int index, BigDecimal value) {
     }
 
-    protected void visitDouble(int index, double value) {
+    protected void visitDouble(int index, Double value) {
     }
 
-    protected void visitFloat(int index, float value) {
+    protected void visitFloat(int index, Float value) {
     }
 
-    protected void visitLong(int index, long value) {
+    protected void visitLong(int index, Long value) {
     }
 
     protected void visitObject(int index, Object value) {
     }
 
-    protected void visitInteger(int index, int value) {
+    protected void visitInteger(int index, Integer value) {
     }
 
-    protected void visitShort(int index, short value) {
+    protected void visitShort(int index, Short value) {
     }
 
-    protected void visitByte(int index, byte value) {
+    protected void visitByte(int index, Byte value) {
     }
 }

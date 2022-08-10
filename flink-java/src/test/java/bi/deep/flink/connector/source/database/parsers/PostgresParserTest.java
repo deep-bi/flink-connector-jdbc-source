@@ -32,7 +32,7 @@ public class PostgresParserTest {
             .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
             .build();
 
-    private static final List<String> dataColumns = List.of("name", "age", "salary");
+    private static final List<String> dataColumns = List.of("firstname", "age", "salary");
     private static final List<Object[]> data = Arrays.asList(
             new Object[]{"Alice", 23, new BigDecimal("3000.00")},
             new Object[]{"Bob", 52, new BigDecimal("7499.99")},

@@ -1,3 +1,6 @@
 CREATE TABLE foo (bar INTEGER ARRAY);
 
-INSERT INTO foo (bar) VALUES ('{1, 2, 3}');
+INSERT INTO foo VALUES
+    ('{1, 2, 3}'),
+    ('{}'),
+    ('{1, 2, null}');
