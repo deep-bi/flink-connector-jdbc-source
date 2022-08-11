@@ -25,13 +25,14 @@ public class JsonStringColumnVisitor extends ColumnVisitor<String> {
 
     @Override
     protected void visitArray(String column, Array array, boolean wasNull, int sqlType) throws SQLException {
-        if (wasNull) object.put(column, "null");
+        if (array == null || wasNull) object.put(column, "null");
         else {
             ArrayVisitor<String> arrayVisitor = new JsonStringArrayVisitor();
             arrayVisitor.visit(array);
             object.put(column, arrayVisitor.collect());
         }
-        array.free();
+
+        if (array != null) array.free();
     }
 
     @Override

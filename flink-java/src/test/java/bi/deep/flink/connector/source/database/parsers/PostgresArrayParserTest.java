@@ -34,6 +34,7 @@ public class PostgresArrayParserTest {
             assertEquals("{\"bar\":[1,2,3]}", queue.take().get());
             assertEquals("{\"bar\":[]}", queue.take().get());
             assertEquals("{\"bar\":[1,2,null]}", queue.take().get());
+            assertEquals("{\"bar\":null}", queue.take().get());
         }
     }
 }
