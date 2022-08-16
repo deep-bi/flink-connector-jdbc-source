@@ -17,7 +17,8 @@
 
     <groupId>bi.deep</groupId>
     <artifactId>flink-connector-jdbc-source-${flink.short.version}</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <!--    <version>0.1-SNAPSHOT</version>-->
+    <version>0.1</version>
     <name>Flink : Connectors : JDBC Source</name>
 
     <packaging>jar</packaging>
