@@ -20,8 +20,43 @@
     <!--    <version>0.1-SNAPSHOT</version>-->
     <version>0.1</version>
     <name>Flink : Connectors : JDBC Source</name>
-
     <packaging>jar</packaging>
+    <description>
+        This connector for Apache Flink provides a streaming JDBC source. The connector implements a source function
+        for Flink that queries the database on a regular interval and pushes all the results to the output stream.
+    </description>
+    <url>https://github.com/deep-bi/flink-connector-jdbc-source</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0 license</name>
+            <url>https://raw.githubusercontent.com/deep-bi/flink-connector-jdbc-source/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>bartosz-mikulski</id>
+            <name>Bartosz Mikulski</name>
+            <email>bartosz.mikulski@deep.bi</email>
+            <organization>Deep.BI</organization>
+            <organizationUrl>https://www.deep.bi/</organizationUrl>
+            <roles>
+                <role>architect</role>
+                <role>developer</role>
+            </roles>
+            <timezone>+2</timezone>
+
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/deep-bi/flink-connector-jdbc-source.git</connection>
+        <developerConnection>scm:git:git://github.com/deep-bi/flink-connector-jdbc-source.git</developerConnection>
+        <url>https://github.com/deep-bi/flink-connector-jdbc-source</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -149,6 +184,52 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
                 </configuration>
             </plugin>
         </plugins>
