@@ -6,20 +6,21 @@
 
     <!--    Based on this: https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-jdbc/pom.xml-->
 
+    <properties>
+        <postgres.version>42.3.6</postgres.version>
+        <oracle.version>21.5.0.0</oracle.version>
+        <flink.short.version>1.15</flink.short.version>
+        <flink.version>${flink.short.version}.0</flink.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
     <groupId>bi.deep</groupId>
-    <artifactId>flink-connector-jdbc-source</artifactId>
+    <artifactId>flink-connector-jdbc-source-${flink.short.version}</artifactId>
     <version>0.1-SNAPSHOT</version>
     <name>Flink : Connectors : JDBC Source</name>
 
     <packaging>jar</packaging>
-
-    <properties>
-        <postgres.version>42.3.6</postgres.version>
-        <oracle.version>21.5.0.0</oracle.version>
-        <flink.version>1.15.0</flink.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -138,7 +139,29 @@
                 <!-- JUnit 5 requires Surefire version 2.22.0 or higher -->
                 <version>2.22.2</version>
             </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
