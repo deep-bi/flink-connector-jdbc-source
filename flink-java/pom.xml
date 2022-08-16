@@ -7,7 +7,7 @@
     <!--    Based on this: https://github.com/apache/flink/blob/master/flink-connectors/flink-connector-jdbc/pom.xml-->
 
     <properties>
-        <postgres.version>42.3.6</postgres.version>
+        <postgres.version>42.4.1</postgres.version>
         <oracle.version>21.5.0.0</oracle.version>
         <flink.short.version>1.15</flink.short.version>
         <flink.version>${flink.short.version}.0</flink.version>
