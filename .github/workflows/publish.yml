@@ -30,3 +30,27 @@ jobs:
         MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
     
+  publish-to-pypi:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: flink-python
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: "Set up package"
+        run: |
+          pip install -r requirements.txt
+          pip install build
+          pip install -e .
+      - name: "Build a binary wheel and a source tarball"
+        run: python -m build --sdist --wheel --outdir dist/ .
+      - name: "Publish distribution 📦 to PyPI"
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
