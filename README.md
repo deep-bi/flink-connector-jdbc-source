@@ -1,6 +1,8 @@
 # JDBC streaming source connector for Apache Flink
 
 [![CI/CD](https://github.com/deep-bi/flink-connector-jdbc-source/actions/workflows/main.yml/badge.svg)](https://github.com/deep-bi/flink-connector-jdbc-source/actions/workflows/main.yml)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/bi.deep/flink-connector-jdbc-source-1.15/badge.svg)](https://mvnrepository.com/artifact/bi.deep/flink-connector-jdbc-source-1.15)
+[![PyPI version](https://badge.fury.io/py/pyflink-deepbi.svg)](https://badge.fury.io/py/pyflink-deepbi)
 
 This connector for Apache Flink provides a streaming JDBC source.
 The connector implements a source function for Flink that queries the database on a regular interval and pushes all the results to the output stream.
