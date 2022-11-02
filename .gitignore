@@ -12,6 +12,7 @@ __pycache__
 sample.db
 test.py
 venv/
+flink-python/build/
 
 # Compiled Java class files
 *.class
