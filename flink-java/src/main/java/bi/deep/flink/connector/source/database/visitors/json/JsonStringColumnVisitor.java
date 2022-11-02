@@ -1,17 +1,26 @@
 package bi.deep.flink.connector.source.database.visitors.json;
 
-import bi.deep.flink.connector.source.utils.SerializableFunction;
 import bi.deep.flink.connector.source.database.visitors.ArrayVisitor;
 import bi.deep.flink.connector.source.database.visitors.ColumnVisitor;
+import bi.deep.flink.connector.source.utils.SerializableFunction;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.math.BigDecimal;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class JsonStringColumnVisitor extends ColumnVisitor<String> {
-    private Map<String, String> object;
+    private ObjectNode object;
+    private final ObjectMapper om = JsonMapper.builder()
+            .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
+            .enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)
+            .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY)
+            .build();
     private final SerializableFunction<String, String> columnDisplayName;
 
     public JsonStringColumnVisitor(SerializableFunction<String, String> columnDisplayName) {
@@ -20,16 +29,16 @@ public class JsonStringColumnVisitor extends ColumnVisitor<String> {
 
     @Override
     public void open() {
-        object = new HashMap<>();
+        object = om.createObjectNode();
     }
 
     @Override
     protected void visitArray(String column, Array array, boolean wasNull, int sqlType) throws SQLException {
-        if (array == null || wasNull) object.put(column, "null");
+        if (array == null || wasNull) object.putPOJO(column, null);
         else {
-            ArrayVisitor<String> arrayVisitor = new JsonStringArrayVisitor();
+            ArrayVisitor<JsonNode> arrayVisitor = new JsonArrayVisitor();
             arrayVisitor.visit(array);
-            object.put(column, arrayVisitor.collect());
+            object.set(columnDisplayName.apply(column), arrayVisitor.collect());
         }
 
         if (array != null) array.free();
@@ -37,20 +46,17 @@ public class JsonStringColumnVisitor extends ColumnVisitor<String> {
 
     @Override
     protected void visitBigDecimal(String column, BigDecimal value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, value.toString());
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitBoolean(String column, Boolean value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, value.toString());
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitByte(String column, byte value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
@@ -60,68 +66,56 @@ public class JsonStringColumnVisitor extends ColumnVisitor<String> {
 
     @Override
     protected void visitDate(String column, Date value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+        object.put(columnDisplayName.apply(column), value.toInstant().toString());
     }
 
     @Override
     protected void visitDouble(String column, double value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitFloat(String column, float value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitInteger(String column, int value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitLong(String column, long value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitObject(String column, Object value, boolean wasNull, int sqlType) {
-        throw new RuntimeException("Cannot parse object to JSON");
+        object.putPOJO(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitShort(String column, short value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.valueOf(value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitString(String column, String value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.format("\"%s\"", value));
+        object.put(columnDisplayName.apply(column), value);
     }
 
     @Override
     protected void visitTime(String column, Time value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+        object.put(columnDisplayName.apply(column), value.toInstant().toString());
     }
 
     @Override
     protected void visitTimestamp(String column, Timestamp value, boolean wasNull, int sqlType) {
-        if (wasNull) object.put(column, "null");
-        else object.put(column, String.format("\"%s\"", value.toInstant().toString()));
+        object.put(columnDisplayName.apply(column), value.toInstant().toString());
     }
 
     @Override
     public String collect() {
-        String json = object.entrySet().stream()
-                .map(kv -> String.format("\"%s\":%s", columnDisplayName.apply(kv.getKey()), kv.getValue()))
-                .collect(Collectors.joining(","));
-        return String.format("{%s}", json);
+        return object.toString();
     }
 }

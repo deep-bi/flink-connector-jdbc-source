@@ -45,6 +45,9 @@ public class JdbcReaderTask<T> implements Runnable {
                 results.put(Result.exceptional(e));
                 throw e;
             }
+        } catch (Throwable e) {
+            results.put(Result.exceptional(e));
+            throw e;
         }
     }
 

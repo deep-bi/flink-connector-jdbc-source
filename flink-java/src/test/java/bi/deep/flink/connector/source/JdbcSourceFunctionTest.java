@@ -85,7 +85,10 @@ class JdbcSourceFunctionTest {
         Thread.sleep(500);
         client.cancel().get();
 
-        assertArrayEquals(dataToArray(dataColumns), sinkToArray());
+        Object[] actual = Arrays.copyOfRange(sinkToArray(), 0, 3);
+        Object[] expected = dataToArray(dataColumns);
+
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -146,7 +149,7 @@ class JdbcSourceFunctionTest {
     private static class CollectSink implements SinkFunction<String> {
 
         // must be static https://nightlies.apache.org/flink/flink-docs-release-1.15/docs/dev/datastream/testing/
-        public static final Set<String> values = Collections.synchronizedSet(new HashSet<>());
+        public static final List<String> values = Collections.synchronizedList(new LinkedList<>());
 
         @Override
         public void invoke(String value, SinkFunction.Context context) throws Exception {

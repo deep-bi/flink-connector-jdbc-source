@@ -20,9 +20,10 @@ Features:
 
 The main branch will always have the most recent supported versions of Flink.
 
-| Connector Version | Flink Version | Status            |
-|-------------------|---------------|-------------------|
-| 0.1               | 1.15          | Under Development |
+| Connector Version | Flink Version | Status     |
+|-------------------|---------------|------------|
+| 0.1.1             | 1.15          | Active     |
+| 0.1               | 1.15          | Deprecated |
 
 
 ## Usage (PyFlink)
